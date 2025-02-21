@@ -41,7 +41,7 @@ Below is an example of how to integrate the package into your React project.
 
 ```tsx
 import React from 'react';
-import { LiveAPIProvider, ControlTray } from '@omiii/gemini-multimodal-live-voice';
+import { LiveAPIProvider, ControlTray } from 'gemini-multimodal-live-voice-only';
 import 'gemini-multimodal-live-voice-only/dist/index.css'; // Import bundled CSS
 
 const App = () => {
