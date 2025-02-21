@@ -1,19 +1,3 @@
-/**
- * Copyright 2024 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import type {
   Content,
   FunctionCall,
@@ -23,23 +7,22 @@ import type {
   Tool,
 } from "@google/generative-ai";
 
-/**
- * this module contains type-definitions and Type-Guards
- */
-
-// Type-definitions
-
-/* outgoing types */
-
-/**
- * the config to initiate the session
- */
 export type LiveConfig = {
   model: string;
   systemInstruction?: { parts: Part[] };
   generationConfig?: Partial<LiveGenerationConfig>;
-  tools?: Array<Tool | { googleSearch: {} } | { codeExecution: {} }>;
+  tools?: Array<Tool | { googleSearch: {} } | { codeExecution: {} } >;
 };
+
+// types.ts
+export type LiveAPIDynamicConfig = {
+  voiceName: string;
+  systemInstruction: {
+    parts: { text: string }[];
+  };
+  tools: any[]; // Replace any with a more specific type if available
+};
+
 
 export type LiveGenerationConfig = GenerationConfig & {
   responseModalities: "text" | "audio" | "image";

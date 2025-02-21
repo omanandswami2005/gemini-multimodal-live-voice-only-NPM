@@ -1,28 +1,16 @@
-/**
- * Copyright 2024 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MultimodalLiveAPIClientConnection,
   MultimodalLiveClient,
 } from "../lib/multimodal-live-client";
-import { LiveConfig } from "../multimodal-live-types";
+import { LiveConfig, LiveAPIDynamicConfig } from "../multimodal-live-types";
 import { AudioStreamer } from "../lib/audio-streamer";
+import { AudioRecorder } from "../lib/audio-recorder";
 import { audioContext } from "../lib/utils";
-import VolMeterWorket from "../lib/worklets/vol-meter";
+import VolMeterWorklet from "../lib/worklets/vol-meter";
+import { createLiveConfig } from "../lib/createLiveConfig";
+
+
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
@@ -32,77 +20,124 @@ export type UseLiveAPIResults = {
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
+  muted: boolean;
+  mute: () => void;
+  unmute: () => void;
 };
 
 export function useLiveAPI({
-  url,
   apiKey,
-}: MultimodalLiveAPIClientConnection): UseLiveAPIResults {
-  const client = useMemo(
-    () => new MultimodalLiveClient({ url, apiKey }),
-    [url, apiKey],
-  );
+  url = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`,
+  dynamicConfig = {
+    voiceName: "Kore",
+    systemInstruction: {
+      parts: [{ text: "You are AI of omiii" }],
+    },
+    tools: [
+
+    ],
+  }, // required dynamic configuration fields
+}: Omit<MultimodalLiveAPIClientConnection, "url"> & { 
+  url?: string;
+  dynamicConfig?: LiveAPIDynamicConfig;
+}): UseLiveAPIResults {
+  
+  // Merge the dynamic config with default values to form the full config
+  const initialConfig = createLiveConfig(dynamicConfig);
+  const client = useMemo(() => new MultimodalLiveClient({ url, apiKey }), [url, apiKey]);
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
 
   const [connected, setConnected] = useState(false);
-  const [config, setConfig] = useState<LiveConfig>({
-    model: "models/gemini-2.0-flash-exp",
-  });
+
+  const [config, setConfig] = useState<LiveConfig>(initialConfig);
+
   const [volume, setVolume] = useState(0);
 
-  // register audio for streaming server -> speakers
+  const [muted, setMuted] = useState(false);
+
+  const [audioRecorder] = useState(() => new AudioRecorder());
+
+  const [inVolume, setInVolume] = useState(0);
+
+
+
+
+
   useEffect(() => {
     if (!audioStreamerRef.current) {
       audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
         audioStreamerRef.current = new AudioStreamer(audioCtx);
         audioStreamerRef.current
-          .addWorklet<any>("vumeter-out", VolMeterWorket, (ev: any) => {
+          .addWorklet<any>("vumeter-out", VolMeterWorklet, (ev: any) => {
             setVolume(ev.data.volume);
           })
-          .then(() => {
-            // Successfully added worklet
-          });
+          .then(() => {});
       });
     }
-  }, [audioStreamerRef]);
+  }, []);
+
+  
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--volume",
+      `${Math.max(5, Math.min(inVolume * 200, 8))}px`,
+    );
+  }, [inVolume]);
 
   useEffect(() => {
-    const onClose = () => {
-      setConnected(false);
-    };
-
+    const onClose = () => setConnected(false);
     const stopAudioStreamer = () => audioStreamerRef.current?.stop();
+    const onAudio = (data: ArrayBuffer) => audioStreamerRef.current?.addPCM16(new Uint8Array(data));
 
-    const onAudio = (data: ArrayBuffer) =>
-      audioStreamerRef.current?.addPCM16(new Uint8Array(data));
-
-    client
-      .on("close", onClose)
-      .on("interrupted", stopAudioStreamer)
-      .on("audio", onAudio);
+    client.on("close", onClose).on("interrupted", stopAudioStreamer).on("audio", onAudio);
 
     return () => {
-      client
-        .off("close", onClose)
-        .off("interrupted", stopAudioStreamer)
-        .off("audio", onAudio);
+      client.off("close", onClose).off("interrupted", stopAudioStreamer).off("audio", onAudio);
     };
   }, [client]);
 
-  const connect = useCallback(async () => {
-    console.log(config);
-    if (!config) {
-      throw new Error("config has not been set");
+  useEffect(() => {
+    const onData = (base64: string) => {
+      client.sendRealtimeInput([
+        {
+          mimeType: "audio/pcm;rate=16000",
+          data: base64,
+        },
+      ]);
+    };
+    if (connected && !muted && audioRecorder) {
+      audioRecorder.on("data", onData).on("volume", setInVolume).start();
+    } else {
+      audioRecorder.stop();
     }
+    return () => {
+      audioRecorder.off("data", onData).off("volume", setInVolume);
+    };
+  }, [connected, client, muted, audioRecorder]);
+
+
+  const connect = useCallback(async () => {
+    if (!config) throw new Error("config has not been set");
     client.disconnect();
     await client.connect(config);
     setConnected(true);
-  }, [client, setConnected, config]);
+  }, [client, config]);
 
   const disconnect = useCallback(async () => {
     client.disconnect();
     setConnected(false);
-  }, [setConnected, client]);
+  }, [client]);
+
+  // Mute and unmute helper functions
+  const mute = useCallback(() => {
+    setMuted(true);
+    audioRecorder.stop();
+    }, []);
+
+  const unmute = useCallback(() => {
+    setMuted(false);
+    // Optionally restart sending audio input or resume the recorder.
+  }, []);
 
   return {
     client,
@@ -112,5 +147,8 @@ export function useLiveAPI({
     connect,
     disconnect,
     volume,
+    muted,
+    mute,
+    unmute
   };
 }

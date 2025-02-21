@@ -1,18 +1,25 @@
 {
-  "name": "multimodal-live-api-web-console",
-  "version": "0.1.0",
+  "name": "@omiii/gemini-multimodal-live-voice",
+  "version": "1.0.0",
+  "description": "A multimodal live streaming library with React components",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "classnames": "^2.5.1",
     "dotenv-flow": "^4.1.0",
     "eventemitter3": "^5.0.1",
     "lodash": "^4.17.21",
-    "react": "^18.3.1",
+    "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.8.3",
     "react-syntax-highlighter": "^15.6.1",
-    "sass": "^1.80.6",
     "vega": "^5.30.0",
     "vega-embed": "^6.29.0",
     "vega-lite": "^5.22.0",
@@ -20,17 +27,28 @@
     "zustand": "^5.0.1"
   },
   "scripts": {
-    "start-https": "HTTPS=true react-scripts start",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "jest",
+    "sass-prod": "sass --no-source-map --style=compressed src/App.scss dist/index.css"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omanandswami2005/gemini-multimodal-live-voice-only.git"
+  },
+  "keywords": [
+    "multimodal",
+    "live",
+    "streaming",
+    "react",
+    "components",
+    "voice",
+    "gemini"
+  ],
+  "author": "Omanand Swami",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0"
   },
   "browserslist": {
     "production": [
@@ -55,6 +73,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "sass": "^1.85.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
