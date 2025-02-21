@@ -1,29 +1,26 @@
-
 # gemini-multimodal-live-voice-only
 
->>>>>>> f6a12e54bebdba076d2727c18a526112c8cc1854
-A React-based multimodal live streaming library that provides a live API context, audio processing, and UI components (such as a Control Tray) for building voice-enabled applications. This package bundles both the JavaScript/TypeScript logic and SCSS-based styles, making it easy to integrate into your project.
+>>>>>>> A React-based multimodal live streaming library that provides a live API context, audio processing, and UI components (such as a Control Tray) for building voice-enabled applications. This package bundles both the JavaScript/TypeScript logic and SCSS-based styles, making it easy to integrate into your project.
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>
+>>
 
 ---
 
 ## Features
 
-<<<<<<< HEAD
 - **Live API Context & Hook**Provides an easy-to-use context (`LiveAPIProvider`) and hook (`useLiveAPIContext`) that manage connections, audio streaming, and configuration for the Gemini Multimodal Live API.
 - **Built-in Audio Processing**Uses an audio recorder and audio streamer to handle real-time audio input and output, along with volume meter worklets.
 - **UI Components**Includes a `ControlTray` component that lets you control the connection state, mute/unmute audio, and monitor volume levels.
 - **SCSS Bundled**
-=======
-- **Live API Context & Hook**  
-  Provides an easy-to-use context (`LiveAPIProvider`) and hook (`useLiveAPIContext`) that manage connections, audio streaming, and configuration for the Gemini Multimodal Live API.
+- **Live API Context & Hook**Provides an easy-to-use context (`LiveAPIProvider`) and hook (`useLiveAPIContext`) that manage connections, audio streaming, and configuration for the Gemini Multimodal Live API.
+- **Built-in Audio Processing**Uses an audio recorder and audio streamer to handle real-time audio input and output, along with volume meter worklets.
+- **UI Components**Includes a `ControlTray` component that lets you control the connection state, mute/unmute audio, and monitor volume levels.
+- **SCSS Bundled**
 
-- **Built-in Audio Processing**  
-  Uses an audio recorder and audio streamer to handle real-time audio input and output, along with volume meter worklets.
-
-- **UI Components**  
-  Includes a `ControlTray` component that lets you control the connection state, mute/unmute audio, and monitor volume levels.
-
-- **SCSS Bundled**  
 ---
 
 ## Installation
@@ -154,7 +151,6 @@ A pre-built UI component that provides audio control features such as mute/unmut
    cd gemini-multimodal-live-voice-only
    npm install
    ```
-
 2. To run the TypeScript compiler in watch mode:
 
    ```bash

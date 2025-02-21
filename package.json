@@ -1,6 +1,6 @@
 {
-  "name": "@omiii/gemini-multimodal-live-voice",
-  "version": "1.0.0",
+  "name": "gemini-multimodal-live-voice-only",
+  "version": "1.0.2",
   "description": "A multimodal live streaming library with React components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,8 +29,7 @@
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "test": "jest",
-    "sass-prod": "sass --no-source-map --style=compressed src/App.scss dist/index.css"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
