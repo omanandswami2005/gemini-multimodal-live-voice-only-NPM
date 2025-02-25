@@ -1,10 +1,10 @@
+import "./control-tray.scss";
 
 import cn from "classnames";
 
 import React, { memo, ReactNode } from "react";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import AudioPulse from "../audio-pulse/AudioPulse";
-import "./control-tray.css";
 
 export type ControlTrayProps = {
   children?: ReactNode;

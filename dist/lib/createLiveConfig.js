@@ -12,4 +12,3 @@ export function createLiveConfig(userConfig) {
             },
         }, systemInstruction: userConfig.systemInstruction, tools: userConfig.tools });
 }
-//# sourceMappingURL=createLiveConfig.js.map

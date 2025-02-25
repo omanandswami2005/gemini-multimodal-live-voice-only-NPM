@@ -54,4 +54,3 @@ class AudioProcessingWorklet extends AudioWorkletProcessor {
 }
 `;
 export default AudioRecordingWorklet;
-//# sourceMappingURL=audio-processing.js.map

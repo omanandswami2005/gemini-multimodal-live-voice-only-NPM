@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { createWorketFromSrc, registeredWorklets, } from "./audioworklet-registry";
 export class AudioStreamer {
     constructor(context) {
@@ -27,29 +18,27 @@ export class AudioStreamer {
         this.gainNode.connect(this.context.destination);
         this.addPCM16 = this.addPCM16.bind(this);
     }
-    addWorklet(workletName, workletSrc, handler) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let workletsRecord = registeredWorklets.get(this.context);
-            if (workletsRecord && workletsRecord[workletName]) {
-                // the worklet already exists on this context
-                // add the new handler to it
-                workletsRecord[workletName].handlers.push(handler);
-                return Promise.resolve(this);
-                //throw new Error(`Worklet ${workletName} already exists on context`);
-            }
-            if (!workletsRecord) {
-                registeredWorklets.set(this.context, {});
-                workletsRecord = registeredWorklets.get(this.context);
-            }
-            // create new record to fill in as becomes available
-            workletsRecord[workletName] = { handlers: [handler] };
-            const src = createWorketFromSrc(workletName, workletSrc);
-            yield this.context.audioWorklet.addModule(src);
-            const worklet = new AudioWorkletNode(this.context, workletName);
-            //add the node into the map
-            workletsRecord[workletName].node = worklet;
-            return this;
-        });
+    async addWorklet(workletName, workletSrc, handler) {
+        let workletsRecord = registeredWorklets.get(this.context);
+        if (workletsRecord && workletsRecord[workletName]) {
+            // the worklet already exists on this context
+            // add the new handler to it
+            workletsRecord[workletName].handlers.push(handler);
+            return Promise.resolve(this);
+            //throw new Error(`Worklet ${workletName} already exists on context`);
+        }
+        if (!workletsRecord) {
+            registeredWorklets.set(this.context, {});
+            workletsRecord = registeredWorklets.get(this.context);
+        }
+        // create new record to fill in as becomes available
+        workletsRecord[workletName] = { handlers: [handler] };
+        const src = createWorketFromSrc(workletName, workletSrc);
+        await this.context.audioWorklet.addModule(src);
+        const worklet = new AudioWorkletNode(this.context, workletName);
+        //add the node into the map
+        workletsRecord[workletName].node = worklet;
+        return this;
     }
     addPCM16(chunk) {
         const float32Array = new Float32Array(chunk.length / 2);
@@ -173,15 +162,13 @@ export class AudioStreamer {
             this.gainNode.connect(this.context.destination);
         }, 200);
     }
-    resume() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.context.state === "suspended") {
-                yield this.context.resume();
-            }
-            this.isStreamComplete = false;
-            this.scheduledTime = this.context.currentTime + this.initialBufferTime;
-            this.gainNode.gain.setValueAtTime(1, this.context.currentTime);
-        });
+    async resume() {
+        if (this.context.state === "suspended") {
+            await this.context.resume();
+        }
+        this.isStreamComplete = false;
+        this.scheduledTime = this.context.currentTime + this.initialBufferTime;
+        this.gainNode.gain.setValueAtTime(1, this.context.currentTime);
     }
     complete() {
         this.isStreamComplete = true;
@@ -210,4 +197,3 @@ export class AudioStreamer {
 //
 // // To stop playing
 // // audioStreamer.stop();
-//# sourceMappingURL=audio-streamer.js.map

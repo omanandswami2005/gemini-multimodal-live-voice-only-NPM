@@ -5,4 +5,3 @@ export const createWorketFromSrc = (workletName, workletSrc) => {
     });
     return URL.createObjectURL(script);
 };
-//# sourceMappingURL=audioworklet-registry.js.map

@@ -1,22 +1,11 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import "./control-tray.css";
 import cn from "classnames";
-import React, { memo } from "react";
+import { memo } from "react";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import AudioPulse from "../audio-pulse/AudioPulse";
-import "./control-tray.css";
 function ControlTray({ children, }) {
     const { connected, connect, disconnect, volume, muted, unmute, mute } = useLiveAPIContext();
-    return (React.createElement("section", { className: "control-tray" },
-        React.createElement("canvas", { style: { display: "none" } }),
-        React.createElement("nav", { className: cn("actions-nav", { disabled: !connected }) },
-            React.createElement("button", { className: cn("action-button mic-button"), onClick: () => muted ? unmute() : mute() }, !muted ? (React.createElement("span", { className: "material-symbols-outlined filled" }, "mic")) : (React.createElement("span", { className: "material-symbols-outlined filled" }, "mic_off"))),
-            React.createElement("div", { className: "action-button no-action outlined" },
-                React.createElement(AudioPulse, { volume: volume, active: connected, hover: false })),
-            children),
-        React.createElement("div", { className: cn("connection-container", { connected }) },
-            React.createElement("div", { className: "connection-button-container" },
-                React.createElement("button", { className: cn("action-button connect-toggle", { connected }), onClick: connected ? disconnect : connect },
-                    React.createElement("span", { className: "material-symbols-outlined filled" }, connected ? "pause" : "play_arrow"))),
-            React.createElement("span", { className: "text-indicator" }, "Streaming"))));
+    return (_jsxs("section", { className: "control-tray", children: [_jsx("canvas", { style: { display: "none" } }), _jsxs("nav", { className: cn("actions-nav", { disabled: !connected }), children: [_jsx("button", { className: cn("action-button mic-button"), onClick: () => muted ? unmute() : mute(), children: !muted ? (_jsx("span", { className: "material-symbols-outlined filled", children: "mic" })) : (_jsx("span", { className: "material-symbols-outlined filled", children: "mic_off" })) }), _jsx("div", { className: "action-button no-action outlined", children: _jsx(AudioPulse, { volume: volume, active: connected, hover: false }) }), children] }), _jsxs("div", { className: cn("connection-container", { connected }), children: [_jsx("div", { className: "connection-button-container", children: _jsx("button", { className: cn("action-button connect-toggle", { connected }), onClick: connected ? disconnect : connect, children: _jsx("span", { className: "material-symbols-outlined filled", children: connected ? "pause" : "play_arrow" }) }) }), _jsx("span", { className: "text-indicator", children: "Streaming" })] })] }));
 }
 export default memo(ControlTray);
-//# sourceMappingURL=ControlTray.js.map

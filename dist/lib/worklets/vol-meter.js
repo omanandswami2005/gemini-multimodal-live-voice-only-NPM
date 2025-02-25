@@ -46,4 +46,3 @@ const VolMeterWorket = `
     }
   }`;
 export default VolMeterWorket;
-//# sourceMappingURL=vol-meter.js.map

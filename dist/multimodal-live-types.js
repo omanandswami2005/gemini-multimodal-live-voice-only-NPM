@@ -44,4 +44,3 @@ export function isLiveFunctionResponse(value) {
     return (typeof candidate.response === "object" && typeof candidate.id === "string");
 }
 export const isToolCallCancellation = (a) => typeof a === "object" && Array.isArray(a.ids);
-//# sourceMappingURL=multimodal-live-types.js.map

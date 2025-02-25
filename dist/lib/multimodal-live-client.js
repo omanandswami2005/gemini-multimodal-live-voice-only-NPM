@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { EventEmitter } from "eventemitter3";
 import { difference } from "lodash";
 import { isInterrupted, isModelTurn, isServerContentMessage, isSetupCompleteMessage, isToolCallCancellationMessage, isToolCallMessage, isTurnComplete, } from "../multimodal-live-types";
@@ -43,14 +34,14 @@ export class MultimodalLiveClient extends EventEmitter {
     connect(config) {
         this.config = config;
         const ws = new WebSocket(this.url);
-        ws.addEventListener("message", (evt) => __awaiter(this, void 0, void 0, function* () {
+        ws.addEventListener("message", async (evt) => {
             if (evt.data instanceof Blob) {
                 this.receive(evt.data);
             }
             else {
                 console.log("non blob message", evt);
             }
-        }));
+        });
         return new Promise((resolve, reject) => {
             const onError = (ev) => {
                 this.disconnect(ws);
@@ -102,66 +93,64 @@ export class MultimodalLiveClient extends EventEmitter {
         }
         return false;
     }
-    receive(blob) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = (yield blobToJSON(blob));
-            if (isToolCallMessage(response)) {
-                this.log("server.toolCall", response);
-                this.emit("toolcall", response.toolCall);
+    async receive(blob) {
+        const response = (await blobToJSON(blob));
+        if (isToolCallMessage(response)) {
+            this.log("server.toolCall", response);
+            this.emit("toolcall", response.toolCall);
+            return;
+        }
+        if (isToolCallCancellationMessage(response)) {
+            this.log("receive.toolCallCancellation", response);
+            this.emit("toolcallcancellation", response.toolCallCancellation);
+            return;
+        }
+        if (isSetupCompleteMessage(response)) {
+            this.log("server.send", "setupComplete");
+            this.emit("setupcomplete");
+            return;
+        }
+        // this json also might be `contentUpdate { interrupted: true }`
+        // or contentUpdate { end_of_turn: true }
+        if (isServerContentMessage(response)) {
+            const { serverContent } = response;
+            if (isInterrupted(serverContent)) {
+                this.log("receive.serverContent", "interrupted");
+                this.emit("interrupted");
                 return;
             }
-            if (isToolCallCancellationMessage(response)) {
-                this.log("receive.toolCallCancellation", response);
-                this.emit("toolcallcancellation", response.toolCallCancellation);
-                return;
+            if (isTurnComplete(serverContent)) {
+                this.log("server.send", "turnComplete");
+                this.emit("turncomplete");
+                //plausible theres more to the message, continue
             }
-            if (isSetupCompleteMessage(response)) {
-                this.log("server.send", "setupComplete");
-                this.emit("setupcomplete");
-                return;
-            }
-            // this json also might be `contentUpdate { interrupted: true }`
-            // or contentUpdate { end_of_turn: true }
-            if (isServerContentMessage(response)) {
-                const { serverContent } = response;
-                if (isInterrupted(serverContent)) {
-                    this.log("receive.serverContent", "interrupted");
-                    this.emit("interrupted");
+            if (isModelTurn(serverContent)) {
+                let parts = serverContent.modelTurn.parts;
+                // when its audio that is returned for modelTurn
+                const audioParts = parts.filter((p) => p.inlineData && p.inlineData.mimeType.startsWith("audio/pcm"));
+                const base64s = audioParts.map((p) => { var _a; return (_a = p.inlineData) === null || _a === void 0 ? void 0 : _a.data; });
+                // strip the audio parts out of the modelTurn
+                const otherParts = difference(parts, audioParts);
+                console.log("otherParts", otherParts);
+                base64s.forEach((b64) => {
+                    if (b64) {
+                        const data = base64ToArrayBuffer(b64);
+                        this.emit("audio", data);
+                        this.log(`server.audio`, `buffer (${data.byteLength})`);
+                    }
+                });
+                if (!otherParts.length) {
                     return;
                 }
-                if (isTurnComplete(serverContent)) {
-                    this.log("server.send", "turnComplete");
-                    this.emit("turncomplete");
-                    //plausible theres more to the message, continue
-                }
-                if (isModelTurn(serverContent)) {
-                    let parts = serverContent.modelTurn.parts;
-                    // when its audio that is returned for modelTurn
-                    const audioParts = parts.filter((p) => p.inlineData && p.inlineData.mimeType.startsWith("audio/pcm"));
-                    const base64s = audioParts.map((p) => { var _a; return (_a = p.inlineData) === null || _a === void 0 ? void 0 : _a.data; });
-                    // strip the audio parts out of the modelTurn
-                    const otherParts = difference(parts, audioParts);
-                    console.log("otherParts", otherParts);
-                    base64s.forEach((b64) => {
-                        if (b64) {
-                            const data = base64ToArrayBuffer(b64);
-                            this.emit("audio", data);
-                            this.log(`server.audio`, `buffer (${data.byteLength})`);
-                        }
-                    });
-                    if (!otherParts.length) {
-                        return;
-                    }
-                    parts = otherParts;
-                    const content = { modelTurn: { parts } };
-                    this.emit("content", content);
-                    this.log(`server.content`, response);
-                }
+                parts = otherParts;
+                const content = { modelTurn: { parts } };
+                this.emit("content", content);
+                this.log(`server.content`, response);
             }
-            else {
-                console.log("received unmatched message", response);
-            }
-        });
+        }
+        else {
+            console.log("received unmatched message", response);
+        }
     }
     /**
      * send realtimeInput, this is base64 chunks of "audio/pcm" and/or "image/jpg"
@@ -236,4 +225,3 @@ export class MultimodalLiveClient extends EventEmitter {
         this.ws.send(str);
     }
 }
-//# sourceMappingURL=multimodal-live-client.js.map

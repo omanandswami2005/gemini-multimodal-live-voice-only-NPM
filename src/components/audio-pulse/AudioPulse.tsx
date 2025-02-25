@@ -1,4 +1,4 @@
-import "./audio-pulse.css";
+import "./audio-pulse.scss";
 import React from "react";
 import { useEffect, useRef } from "react";
 import c from "classnames";

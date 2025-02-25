@@ -1,24 +1,15 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 const map = new Map();
 export const audioContext = (() => {
     const didInteract = new Promise((res) => {
         window.addEventListener("pointerdown", res, { once: true });
         window.addEventListener("keydown", res, { once: true });
     });
-    return (options) => __awaiter(void 0, void 0, void 0, function* () {
+    return async (options) => {
         try {
             const a = new Audio();
             a.src =
                 "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-            yield a.play();
+            await a.play();
             if ((options === null || options === void 0 ? void 0 : options.id) && map.has(options.id)) {
                 const ctx = map.get(options.id);
                 if (ctx) {
@@ -32,7 +23,7 @@ export const audioContext = (() => {
             return ctx;
         }
         catch (e) {
-            yield didInteract;
+            await didInteract;
             if ((options === null || options === void 0 ? void 0 : options.id) && map.has(options.id)) {
                 const ctx = map.get(options.id);
                 if (ctx) {
@@ -45,7 +36,7 @@ export const audioContext = (() => {
             }
             return ctx;
         }
-    });
+    };
 })();
 export const blobToJSON = (blob) => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -68,4 +59,3 @@ export function base64ToArrayBuffer(base64) {
     }
     return bytes.buffer;
 }
-//# sourceMappingURL=utils.js.map

@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MultimodalLiveClient, } from "../lib/multimodal-live-client";
 import { AudioStreamer } from "../lib/audio-streamer";
@@ -75,17 +66,17 @@ export function useLiveAPI({ apiKey, url = `wss://generativelanguage.googleapis.
             audioRecorder.off("data", onData).off("volume", setInVolume);
         };
     }, [connected, client, muted, audioRecorder]);
-    const connect = useCallback(() => __awaiter(this, void 0, void 0, function* () {
+    const connect = useCallback(async () => {
         if (!config)
             throw new Error("config has not been set");
         client.disconnect();
-        yield client.connect(config);
+        await client.connect(config);
         setConnected(true);
-    }), [client, config]);
-    const disconnect = useCallback(() => __awaiter(this, void 0, void 0, function* () {
+    }, [client, config]);
+    const disconnect = useCallback(async () => {
         client.disconnect();
         setConnected(false);
-    }), [client]);
+    }, [client]);
     // Mute and unmute helper functions
     const mute = useCallback(() => {
         setMuted(true);
@@ -108,4 +99,3 @@ export function useLiveAPI({ apiKey, url = `wss://generativelanguage.googleapis.
         unmute
     };
 }
-//# sourceMappingURL=use-live-api.js.map
