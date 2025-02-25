@@ -1,4 +1,21 @@
-public/
-.env
-dist/
+# Node.js dependencies
 node_modules/
+
+# Build output
+dist/
+
+# Environment variables
+.env
+
+# Public folder (optional, remove if you want to track some files inside)
+public/
+
+# Compiled source files
+*.jsx
+*.tsx
+*.map
+
+# Editor/IDE settings
+.vscode/
+.idea/
+.DS_Store
