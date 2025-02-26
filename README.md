@@ -55,9 +55,7 @@ const App = () => (
       ]
     }}
   >
-    <ControlTray>
-      {/* Additional UI elements can be included here */}
-    </ControlTray>
+    <ControlTray />
   </LiveAPIProvider>
 );
 
