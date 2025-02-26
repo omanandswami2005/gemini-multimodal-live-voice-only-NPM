@@ -1,19 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
-    "target": "ES2017",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "declaration": true,
-    "sourceMap": false,
+    "target": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["node_modules",
-  "src/App.tsx",
-  "src/index.tsx",],
-
-  "include": ["src"]
+  "include": ["global.d.ts", "lib"]
 }

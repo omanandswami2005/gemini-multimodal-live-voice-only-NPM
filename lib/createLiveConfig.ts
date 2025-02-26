@@ -1,5 +1,5 @@
 // createLiveConfig.ts
-import { LiveConfig, LiveAPIDynamicConfig } from "../multimodal-live-types";
+import { LiveConfig, LiveAPIDynamicConfig } from "./multimodal-live-types";
 import { defaultLiveConfig } from "./defaultLiveConfig";
 // import { LiveAPIDynamicConfig } from "../types";
 

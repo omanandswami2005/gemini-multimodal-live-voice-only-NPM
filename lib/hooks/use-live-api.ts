@@ -2,15 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MultimodalLiveAPIClientConnection,
   MultimodalLiveClient,
-} from "../lib/multimodal-live-client";
+} from "../multimodal-live-client";
 import { LiveConfig, LiveAPIDynamicConfig } from "../multimodal-live-types";
-import { AudioStreamer } from "../lib/audio-streamer";
-import { AudioRecorder } from "../lib/audio-recorder";
-import { audioContext } from "../lib/utils";
-import VolMeterWorklet from "../lib/worklets/vol-meter";
-import { createLiveConfig } from "../lib/createLiveConfig";
-
-  
+import { AudioStreamer } from "../audio-streamer";
+import { AudioRecorder } from "../audio-recorder";
+import { audioContext } from "../utils";
+import VolMeterWorklet from "../worklets/vol-meter";
+import { createLiveConfig } from "../createLiveConfig";
 
 export type UseLiveAPIResults = {
   client: MultimodalLiveClient;
@@ -33,18 +31,18 @@ export function useLiveAPI({
     systemInstruction: {
       parts: [{ text: "You are AI of omiii" }],
     },
-    tools: [
-
-    ],
+    tools: [],
   }, // required dynamic configuration fields
-}: Omit<MultimodalLiveAPIClientConnection, "url"> & { 
+}: Omit<MultimodalLiveAPIClientConnection, "url"> & {
   url?: string;
   dynamicConfig?: LiveAPIDynamicConfig;
 }): UseLiveAPIResults {
-  
   // Merge the dynamic config with default values to form the full config
   const initialConfig = createLiveConfig(dynamicConfig);
-  const client = useMemo(() => new MultimodalLiveClient({ url, apiKey }), [url, apiKey]);
+  const client = useMemo(
+    () => new MultimodalLiveClient({ url, apiKey }),
+    [url, apiKey]
+  );
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
 
   const [connected, setConnected] = useState(false);
@@ -59,10 +57,6 @@ export function useLiveAPI({
 
   const [inVolume, setInVolume] = useState(0);
 
-
-
-
-
   useEffect(() => {
     if (!audioStreamerRef.current) {
       audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
@@ -76,23 +70,29 @@ export function useLiveAPI({
     }
   }, []);
 
-  
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--volume",
-      `${Math.max(5, Math.min(inVolume * 200, 8))}px`,
+      `${Math.max(5, Math.min(inVolume * 200, 8))}px`
     );
   }, [inVolume]);
 
   useEffect(() => {
     const onClose = () => setConnected(false);
     const stopAudioStreamer = () => audioStreamerRef.current?.stop();
-    const onAudio = (data: ArrayBuffer) => audioStreamerRef.current?.addPCM16(new Uint8Array(data));
+    const onAudio = (data: ArrayBuffer) =>
+      audioStreamerRef.current?.addPCM16(new Uint8Array(data));
 
-    client.on("close", onClose).on("interrupted", stopAudioStreamer).on("audio", onAudio);
+    client
+      .on("close", onClose)
+      .on("interrupted", stopAudioStreamer)
+      .on("audio", onAudio);
 
     return () => {
-      client.off("close", onClose).off("interrupted", stopAudioStreamer).off("audio", onAudio);
+      client
+        .off("close", onClose)
+        .off("interrupted", stopAudioStreamer)
+        .off("audio", onAudio);
     };
   }, [client]);
 
@@ -115,7 +115,6 @@ export function useLiveAPI({
     };
   }, [connected, client, muted, audioRecorder]);
 
-
   const connect = useCallback(async () => {
     if (!config) throw new Error("config has not been set");
     client.disconnect();
@@ -132,7 +131,7 @@ export function useLiveAPI({
   const mute = useCallback(() => {
     setMuted(true);
     audioRecorder.stop();
-    }, []);
+  }, []);
 
   const unmute = useCallback(() => {
     setMuted(false);
@@ -149,6 +148,6 @@ export function useLiveAPI({
     volume,
     muted,
     mute,
-    unmute
+    unmute,
   };
 }
