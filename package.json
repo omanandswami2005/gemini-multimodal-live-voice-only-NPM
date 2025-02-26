@@ -1,6 +1,6 @@
 {
   "name": "gemini-multimodal-live-voice-only",
-  "version": "1.0.12",
+  "version": "1.1.2",
   "description": "A multimodal live streaming library with React components",
   "main": "dist/gemini-multimodal-live-voice-only.es.js",
   "module": "dist/gemini-multimodal-live-voice-only.es.js",
@@ -10,6 +10,7 @@
     "README.md"
   ],
   "dependencies": {
+    "classnames": "^2.5.1",
     "eventemitter3": "^5.0.1",
     "lodash": "^4.17.21",
     "react": "^19.0.0",

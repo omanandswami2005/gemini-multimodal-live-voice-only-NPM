@@ -1,3 +1,4 @@
+
 # gemini-multimodal-live-voice-only
 
 A React-based multimodal live streaming library that provides a live API context, audio processing, and UI components (such as a Control Tray) for building voice-enabled applications. This package bundles both the JavaScript/TypeScript logic making it easy to integrate into your project.
@@ -55,9 +56,7 @@ const App = () => (
       ]
     }}
   >
-    <ControlTray>
-      {/* Additional UI elements can be included here */}
-    </ControlTray>
+    <ControlTray />
   </LiveAPIProvider>
 );
 
@@ -158,7 +157,7 @@ useEffect(() => {
         // Process function call based on its name.
         switch (fc.name) {
           case "create_item": {
-      
+    
             // Create an item using provided args.
             try {
               const response = await fetch("http://localhost:5000/items", {
@@ -172,7 +171,7 @@ useEffect(() => {
               return { id: fc.id, response: { output: { error: error.message } } };
             }
           }
-      
+    
           // Add additional cases as needed.
           default:
             return { id: fc.id, response: { output: { error: "Unknown function" } } };
