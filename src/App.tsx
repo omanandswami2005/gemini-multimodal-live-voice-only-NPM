@@ -12,7 +12,7 @@ import 'gemini-multimodal-live-voice-only/dist/gemini-multimodal-live-voice-only
 function App() {
   return (
     <div className="App">
-      <LiveAPIProvider apiKey={"AIzaSyDMV1Lq3SAWeaxromOag8vlJtOqKnOHqa4"}>
+      <LiveAPIProvider apiKey={"your-api-key"}>
         <div className="streaming-console">
           <main>
             <div className="main-app-area"></div>

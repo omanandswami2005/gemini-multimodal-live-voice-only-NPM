@@ -1,24 +1,46 @@
+# **gemini-multimodal-live-voice-only**
 
-# gemini-multimodal-live-voice-only
+A **React-based multimodal live streaming library** that provides:
 
-A React-based multimodal live streaming library that provides a live API context, audio processing, and UI components (such as a Control Tray) for building voice-enabled applications. This package bundles both the JavaScript/TypeScript logic making it easy to integrate into your project.
+✅ A **Live API context**
 
----
+✅ **Audio processing** (real-time input/output, volume meters)
 
-## Features
+✅ **Pre-built UI components** ( *Control Tray for audio controls* )
 
-- **Live API Context & Hook**Provides an easy-to-use context (`LiveAPIProvider`) and hook (`useLiveAPIContext`) that manage connections, audio streaming, and configuration for the Gemini Multimodal Live API.
-- **Built-in Audio Processing**Uses an audio recorder and audio streamer to handle real-time audio input and output, along with volume meter worklets.
-- **UI Components**Includes a pre-built `ControlTray` component that offers controls for connecting/disconnecting, muting/unmuting audio, and monitoring volume levels.
-- **Tool Call Handling**
-  A built-in tool call handler that processes function calls such as `create_todo`...and more....
-- See the example below.
+✅ **Tool call handling** for function-based interactions
+
+This package bundles **JavaScript/TypeScript logic** for easy integration into any React project.
 
 ---
 
-## Installation
+## **✨ Features**
 
-Install the package via npm:
+* 🔹 **Live API Context & Hook**
+
+  Provides `LiveAPIProvider` (context) and `useLiveAPIContext` (hook) to manage  **connections, audio streaming, and configuration** .
+* 🔹 **Built-in Audio Processing**
+
+  Handles **real-time audio input/output** with  **volume meters** .
+* 🔹 **Pre-Built UI Components**
+
+  Includes  **`ControlTray`** , a ready-to-use component for  **connect/disconnect, mute/unmute, and volume monitoring** .
+* 🔹 **Tool Call Handling**
+
+  Built-in tool call handler for functions like `"create_todo"` and more.
+* 🔹 **Easy Styling**
+
+  Auto-inject bundled styles via:
+
+  ```tsx
+  import 'gemini-multimodal-live-voice-only/dist/gemini-multimodal-live-voice-only.css';
+  ```
+
+---
+
+## **📌 Installation**
+
+Install the package using npm:
 
 ```bash
 npm install gemini-multimodal-live-voice-only
@@ -26,33 +48,28 @@ npm install gemini-multimodal-live-voice-only
 
 ---
 
-## Usage
+## **🚀 Usage**
 
-### Basic Setup
+### **Basic Setup**
 
-Wrap your application with the `LiveAPIProvider` to initialize the live API context and then use the provided UI components:
-
-Give you tools (Array of objects containing function declarations in the format of [GEMINI FUNCTION CALLING TOOL](https://ai.google.dev/gemini-api/docs/function-calling#function_declarations "Gemini Function Calling!!!"))
+Wrap your app with `LiveAPIProvider` and use the built-in UI components.
 
 ```tsx
 import React from 'react';
 import { LiveAPIProvider, ControlTray } from 'gemini-multimodal-live-voice-only';
-// Auto-inject bundled CSS:
-import 'gemini-multimodal-live-voice-only/dist/index.css';
+import 'gemini-multimodal-live-voice-only/dist/gemini-multimodal-live-voice-only.css';
 
 const App = () => (
   <LiveAPIProvider
-    apiKey="your-api-key"
+    apiKey={"your-api-key"}
     dynamicConfig={{
       voiceName: "Kore",
       systemInstruction: {
-	//Give your SYSTEM_INSTRUCTION here....
         parts: [{ text: "You are AI of omiii. Follow the provided tools and instructions." }]
       },
-	// Give you tools here (Array of objects containing function declarations in the format of GEMINI FUNCTION CALLING TOOL EXAMPLE)
       tools: [
         { googleSearch: {} },
-        { functionDeclarations: []
+        { functionDeclarations: [] }
       ]
     }}
   >
@@ -61,12 +78,13 @@ const App = () => (
 );
 
 export default App;
-
 ```
 
-### Accessing the Live API Context
+---
 
-You can also access live API functionalities using the `useLiveAPIContext` hook:
+### **Accessing the Live API Context**
+
+Use the `useLiveAPIContext` hook for  **managing connections and audio controls** .
 
 ```tsx
 import React from 'react';
@@ -90,75 +108,82 @@ const StatusDisplay = () => {
 };
 
 export default StatusDisplay;
-
 ```
 
 ---
 
-## API Reference
+## **📖 API Reference**
 
-### LiveAPIProvider
+### **LiveAPIProvider**
 
-**Description:**
-The `LiveAPIProvider` component initializes the live API connection and provides context to its children.
+> **Initializes and provides the live API context.**
 
-**Props:**
+#### **Props:**
 
-- **apiKey** (string, required)Your API key for connecting to the live service.
-- **dynamicConfig** (object, required) Contains dynamic configuration details:
+| Prop Name         | Type   | Required | Description                            |
+| ----------------- | ------ | -------- | -------------------------------------- |
+| `apiKey`        | string | ✅ Yes   | API key for authentication.            |
+| `dynamicConfig` | object | ✅ Yes   | Contains configuration settings.       |
+| `url`           | string | ❌ No    | API URL (defaults to Gemini Live API). |
 
-  - **voiceName** (string): The name of the voice configuration.
-    - Available voices are:
-      - Puck
-      - Charon
-      - Kore
-      - Fenrir
-      - Aoede
-  - **systemInstruction** (object): An object with a `parts` array, where each part has a `text` field.
-  - **tools** (array): An array of tool configurations (e.g., `{ googleSearch: {} }`).
-- **url** (string, optional)
-  The API URL. Defaults to the Gemini live API URL if not provided.
+🔹 **dynamicConfig** options:
 
-### useLiveAPIContext
-
-**Description:**
-A custom hook that provides access to the live API client and related state/functions.
-
-**Returns an object with:**
-
-- **client**: Instance of the live API client.
-- **config**: The current live API configuration.
-- **setConfig**: Function to update the configuration.
-- **connected**: Boolean indicating the connection status.
-- **connect**: Function to initiate a connection.
-- **disconnect**: Function to disconnect.
-- **volume**: The current audio volume.
-- **muted**: Boolean indicating whether audio is muted.
-- **mute**: Function to mute audio.
-- **unmute**: Function to unmute audio.
-
-### ControlTray
-
-**Description:**
-A UI component that provides audio controls, including mute/unmute and connection toggling, with visual indicators for audio volume.
+* **voiceName** (`string`): Sets the voice. Available voices: `"Puck"`, `"Charon"`, `"Kore"`, `"Fenrir"`, `"Aoede"`.
+* **systemInstruction** (`object`): Defines system behavior (array of `{ text: string }` objects).
+* **tools** (`array`): Function declarations (Google Gemini tool format).
 
 ---
 
-## Tool Call Handler Example
+### **useLiveAPIContext**
 
-This example demonstrates a simple handler that processes tool calls by switching on `fc.name`, handling a `"create_item"` function call, and returning appropriate responses. Feel free to modify and extend this example to fit your needs:
+> **Hook for managing the live API connection.**
+
+#### **Returns:**
+
+| Property       | Type     | Description                              |
+| -------------- | -------- | ---------------------------------------- |
+| `client`     | object   | API client instance.                     |
+| `config`     | object   | Current API configuration.               |
+| `setConfig`  | function | Updates the API configuration.           |
+| `connected`  | boolean  | `true`if connected,`false`otherwise. |
+| `connect`    | function | Establishes a connection.                |
+| `disconnect` | function | Closes the connection.                   |
+| `volume`     | number   | Current audio volume level.              |
+| `muted`      | boolean  | `true`if muted,`false`otherwise.     |
+| `mute`       | function | Mutes the microphone.                    |
+| `unmute`     | function | Unmutes the microphone.                  |
+
+---
+
+### **ControlTray**
+
+> **Pre-built UI component for managing audio controls.**
+
+✅ **Features:**
+
+✔ Connect/Disconnect button
+
+✔ Mute/Unmute button
+
+✔ Volume level visualization
+
+```tsx
+<ControlTray />
+```
+
+---
+
+## **🛠 Tool Call Handler Example**
+
+Process tool calls dynamically based on function names:
 
 ```tsx
 useEffect(() => {
-  const onToolCall = async (toolCall: ToolCall) => {
+  const onToolCall = async (toolCall) => {
     const responses = await Promise.all(
       toolCall.functionCalls.map(async (fc) => {
-  
-        // Process function call based on its name.
         switch (fc.name) {
-          case "create_item": {
-    
-            // Create an item using provided args.
+          case "create_item":
             try {
               const response = await fetch("http://localhost:5000/items", {
                 method: "POST",
@@ -170,60 +195,103 @@ useEffect(() => {
             } catch (error) {
               return { id: fc.id, response: { output: { error: error.message } } };
             }
-          }
-    
-          // Add additional cases as needed.
           default:
             return { id: fc.id, response: { output: { error: "Unknown function" } } };
         }
       })
     );
-  
     setTimeout(() => client.sendToolResponse({ functionResponses: responses }), 200);
   };
 
   client.on("toolcall", onToolCall);
   return () => client.off("toolcall", onToolCall);
 }, [client]);
-
 ```
 
 ---
 
-## Build & Development
+## **🎨 Style Guide**
 
-### Development Setup
+### **Importing Styles**
 
-1. Clone the repository and install dependencies:
+To apply default styles, import the CSS file:
 
+```tsx
+import 'gemini-multimodal-live-voice-only/dist/gemini-multimodal-live-voice-only.css';
+```
+
+### **Custom Styling**
+
+Override styles using  **CSS classes** :
+
+```css
+.control-tray {
+  background-color: #282c34;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+button {
+  background-color: #61dafb;
+  border: none;
+  padding: 8px 16px;
+  margin: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #4fa3d1;
+}
+```
+
+---
+
+## **🛠 Build & Development**
+
+### **Development Setup**
+
+1. Clone the repository:
    ```bash
-   git clone https://github.com/omanandswami2005/gemini-multimodal-live-voice-only.git
-   cd gemini-multimodal-live-voice-only
+   git clone https://github.com/omanandswami2005/gemini-multimodal-live-voice-only-NPM.git
+   cd gemini-multimodal-live-voice-only-NPM
    npm install
    ```
-2. To run TypeScript in watch mode:
-
+2. Start development mode:
    ```bash
    npm run dev
    ```
 
-### Building the Package
+### **Building the Package**
 
-This package uses a combination of `tsc` (for TypeScript) and `sass` (for SCSS) along with a post-build script to strip out individual SCSS imports. To build the package, run:
+Run the following command to build the package:
 
 ```bash
 npm run build
 ```
 
-## Contributing
+---
 
-Contributions are welcome! Please fork the repository, make your changes, and submit a pull request. For major changes, please open an issue first to discuss what you would like to change.
+## **🤝 Contributing**
+
+1️⃣ Fork the repository
+
+2️⃣ Make changes
+
+3️⃣ Submit a **pull request**
+
+For major changes, open an issue **before** starting development.
 
 ---
 
-## Support
+## **📩 Support**
 
-For any issues or questions, please open an issue in the [GitHub repository](https://github.com/omanandswami2005/gemini-multimodal-live-voice-only) or contact [omanandswami2005@gmail.com](mailto:omanandswami2005@gmail.com).
+For issues and questions:
+
+🔹  **GitHub** : [Open an issue](https://github.com/omanandswami2005/gemini-multimodal-live-voice-only-NPM)
+
+🔹  **Email** : [omanandswami2005@gmail.com](mailto:omanandswami2005@gmail.com)
 
 ---
 
