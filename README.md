@@ -130,7 +130,7 @@ export default StatusDisplay;
 
 * **voiceName** (`string`): Sets the voice. Available voices: `"Puck"`, `"Charon"`, `"Kore"`, `"Fenrir"`, `"Aoede"`.
 * **systemInstruction** (`object`): Defines system behavior (array of `{ text: string }` objects).
-* **tools** (`array`): Function declarations (Google Gemini tool format).
+* **tools** (`array`): Function declarations ([Google Gemini function calling format](https://ai.google.dev/gemini-api/docs/function-calling#function_declarations "Gemini Function calling tutorial ref...")).
 
 ---
 
